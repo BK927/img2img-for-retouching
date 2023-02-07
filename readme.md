@@ -1,4 +1,4 @@
-# Enhanced img2img
+# Img2img for retouching
 
 This is an extension for [AUTOMATIC111's WebUI](https://github.com/AUTOMATIC1111/stable-diffusion-webui). This is for retouching multiple images at once.
 
