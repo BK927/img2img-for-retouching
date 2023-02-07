@@ -4,13 +4,12 @@ import traceback
 import pandas as pd
 
 import modules.scripts as scripts
-import modules.images as img
 import gradio as gr
 
 from modules import processing
 from modules.processing import Processed, process_images, create_infotext
 from PIL import Image, PngImagePlugin
-from modules.shared import opts, cmd_opts, state
+from modules.shared import opts, state
 from modules.script_callbacks import ImageSaveParams, before_image_saved_callback
 from modules.sd_hijack import model_hijack
 
