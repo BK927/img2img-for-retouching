@@ -65,8 +65,7 @@ class Script(scripts.Script):
 
         with gr.Row():
             input_dir = gr.Textbox(label="Input directory", lines=1)
-
-        output_dir = gr.Textbox(label="Output directory", lines=1)
+            output_dir = gr.Textbox(label="Output directory", lines=1)
 
         with gr.Row():
             use_txt = gr.Checkbox(label="Use txt files as prompt")
