@@ -253,6 +253,7 @@ class Script(scripts.Script):
                     )
                     history.append(proc.images[0])
 
+                proc.seed = initial_seed
                 all_images += history
             else:
                 proc = process_images(p)
