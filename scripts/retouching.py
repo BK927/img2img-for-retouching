@@ -189,14 +189,6 @@ class Script(scripts.Script):
                         print("tags: " + tags)
                         p.prompt = init_prompt + ", " + tags
 
-            def process_images_with_size(p, size, strength):
-                (
-                    p.width,
-                    p.height,
-                ) = size
-                p.strength = strength
-                return process_images(p)
-
             proc = None
             all_images = []
 
@@ -213,6 +205,7 @@ class Script(scripts.Script):
                 output_images, info = None, None
                 initial_seed = None
                 initial_info = None
+                initial_denoising = None
 
                 grids = []
 
@@ -241,6 +234,9 @@ class Script(scripts.Script):
                         initial_seed = proc.seed
                         initial_info = proc.info
 
+                    if initial_denoising is None:
+                        initial_denoising = p.denoising_strength
+
                     init_img = proc.images[0]
 
                     p.init_images = [init_img]
@@ -254,6 +250,7 @@ class Script(scripts.Script):
                     history.append(proc.images[0])
 
                 proc.seed = initial_seed
+                p.denoising_strength = initial_denoising
                 all_images += history
             else:
                 proc = process_images(p)
