@@ -263,9 +263,10 @@ class Script(scripts.Script):
                 output_images = all_images
 
             for output, (input_img, path) in zip(proc.images, batch_images):
-                filename = os.path.basename(path)
+                base_name = os.path.basename(path)
 
-                def save_image(output, filename):
+                # 이미지 저장 함수
+                def save_image(img, filename, save_dir):
                     comments = {}
                     if len(model_hijack.comments) > 0:
                         for comment in model_hijack.comments:
@@ -278,7 +279,7 @@ class Script(scripts.Script):
                     if info is not None:
                         pnginfo["parameters"] = info
 
-                    params = ImageSaveParams(output, p, filename, pnginfo)
+                    params = ImageSaveParams(img, p, filename, pnginfo)
                     before_image_saved_callback(params)
                     fullfn_without_extension, extension = os.path.splitext(filename)
 
@@ -300,32 +301,30 @@ class Script(scripts.Script):
                         for k, v in params.pnginfo.items():
                             pnginfo_data.add_text(k, str(v))
 
-                        output.save(
-                            os.path.join(output_dir, filename), pnginfo=pnginfo_data
+                        img.save(
+                            os.path.join(save_dir, filename), pnginfo=pnginfo_data
                         )
 
                     elif extension.lower() in (".jpg", ".jpeg", ".webp"):
-                        output.save(os.path.join(output_dir, filename))
+                        img.save(os.path.join(save_dir, filename))
 
                         if opts.enable_pnginfo and info is not None:
                             piexif.insert(
-                                exif_bytes(), os.path.join(output_dir, filename)
+                                exif_bytes(), os.path.join(save_dir, filename)
                             )
                     else:
-                        output.save(os.path.join(output_dir, filename))
-
+                        img.save(os.path.join(save_dir, filename))
+                
+                # 실제 저장 하는 부분
                 if is_rerun:
-                    base_output_dir = output_dir
                     for output_index, o in enumerate(all_images):
-                        output_dir = os.path.join(
-                            base_output_dir, "loop" + str(output_index)
+                        save_dir = os.path.join(
+                            output_dir, "loop" + str(output_index)
                         )
-                        self.__create_folder(output_dir)
-                        save_image(o, filename)
-
-                    output_dir = base_output_dir
+                        self.__create_folder(save_dir)
+                        save_image(o, base_name, save_dir)
                 else:
-                    save_image(output, filename)
+                    save_image(output, base_name, output_dir)
 
             frame += 1
 
