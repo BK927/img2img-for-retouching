@@ -380,7 +380,7 @@ class Script(scripts.Script):
                 break
             else:
                 p.denoising_strength += traversing_step
-                if p.denoising_strength > traversing_end:
+                if not p.denoising_strength <= traversing_end:
                     p.denoising_strength = current_denoising
                     break
 
