@@ -215,6 +215,7 @@ class Script(scripts.Script):
             print(p.denoising_strength)
 
         for n in range(batch_count):
+            p.seed = -1
             processing.fix_seed(p)
             initial_output_dir = output_dir
             output_dir = os.path.join(output_dir, str(p.seed))
