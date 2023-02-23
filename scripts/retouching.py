@@ -70,6 +70,29 @@ class Script(scripts.Script):
         with gr.Row():
             is_traversing = gr.Checkbox(label="Traverse between the given denoising values.")
 
+        with gr.Row(visible=False) as traversing_options:
+            traversing_start = gr.Slider(
+                minimum=0.01,
+                maximum=1,
+                step=0.01,
+                label="start",
+                value=0.2,
+            )
+            traversing_end = gr.Slider(
+                minimum=0.01,
+                maximum=1,
+                step=0.01,
+                label="end",
+                value=0.4,
+            )
+            traversing_step = gr.Slider(
+                minimum=0.01,
+                maximum=1,
+                step=0.01,
+                label="step",
+                value=0.01,
+            )
+
         with gr.Row():
             use_txt = gr.Checkbox(label="Use txt files as prompt.")
 
@@ -95,29 +118,6 @@ class Script(scripts.Script):
                 label="Denoising strength change factor",
                 value=1,
                 elem_id=self.elem_id("denoising_strength_change_factor"),
-            )
-
-        with gr.Row(visible=False) as traversing_options:
-            traversing_start = gr.Slider(
-                minimum=0.01,
-                maximum=1,
-                step=0.01,
-                label="start",
-                value=0.2,
-            )
-            traversing_end = gr.Slider(
-                minimum=0.01,
-                maximum=1,
-                step=0.01,
-                label="end",
-                value=0.4,
-            )
-            traversing_step = gr.Slider(
-                minimum=0.01,
-                maximum=1,
-                step=0.01,
-                label="step",
-                value=0.01,
             )
 
         is_rerun.change(
@@ -369,17 +369,21 @@ class Script(scripts.Script):
                         
                         # 실제 저장 하는 부분
                         if is_traversing:
-                            output_dir = os.path.join(output_dir, str(round(p.denoising_strength, 2)))
+                            # output_dir = os.path.join(output_dir, str(round(p.denoising_strength, 2)))
+                            base, extension = os.path.splitext(base_name)
+                            base_name = base + "-" + str(round(p.denoising_strength, 2)) + extension
 
                         if is_rerun:
                             for output_index, o in enumerate(all_images):
-                                temp = output_dir
-                                output_dir = os.path.join(
-                                    output_dir, "loop" + str(output_index)
-                                )
+                                # temp = output_dir
+                                # output_dir = os.path.join(
+                                #     output_dir, "loop" + str(output_index)
+                                # )
                                 self.__create_folder(output_dir)
-                                save_image(o, base_name, output_dir)
-                                output_dir = temp
+                                # save_image(o, base_name, output_dir)
+                                base, extension = os.path.splitext(base_name)
+                                save_image(o, base + "-loop" + str(output_index) + extension, output_dir)
+                                # output_dir = temp
                         else:
                             self.__create_folder(output_dir)
                             save_image(output, base_name, output_dir)
