@@ -372,13 +372,11 @@ class Script(scripts.Script):
                                     )
                             else:
                                 img.save(os.path.join(save_dir, filename))
-                        
+
                         # 실제 저장 하는 부분
                         if is_each_dir:
                             output_dir = os.path.join(output_dir, str(p.seed))
-                        else:
-                            base, extension = os.path.splitext(base_name)
-                            base_name = base + "-" + str(p.seed) + extension
+                        
 
                         if is_traversing:
                             if is_each_dir:
@@ -396,12 +394,15 @@ class Script(scripts.Script):
                                     save_filename = base_name
                                 else:
                                     base, extension = os.path.splitext(base_name)
-                                    save_filename = base + "-loop" + str(output_index) + extension
+                                    save_filename = base + "-loop" + str(output_index) + "-" + str(p.seed)+ extension
                                 self.__create_folder(output_dir)
                                 save_image(o, save_filename, output_dir)
                                 output_dir = temp
                         else:
                             self.__create_folder(output_dir)
+                            if not is_each_dir:
+                                base, extension = os.path.splitext(base_name)
+                                base_name = base + "-" + str(p.seed) + extension
                             save_image(output, base_name, output_dir)
 
                         output_dir = base_output_dir
