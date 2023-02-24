@@ -66,6 +66,9 @@ class Script(scripts.Script):
         with gr.Row():
             input_dir = gr.Textbox(label="Input directory", lines=1)
             output_dir = gr.Textbox(label="Output directory", lines=1)
+
+        with gr.Row():
+            is_each_dir = gr.Checkbox(label="Save images to each folder.")
         
         with gr.Row():
             is_traversing = gr.Checkbox(label="Traverse between the given denoising values.")
@@ -139,6 +142,7 @@ class Script(scripts.Script):
         return [
             input_dir,
             output_dir,
+            is_each_dir,
             use_txt,
             txt_dir,
             is_traversing,
@@ -164,6 +168,7 @@ class Script(scripts.Script):
         p,
         input_dir,
         output_dir,
+        is_each_dir,
         use_txt,
         txt_dir,
         is_traversing,
@@ -219,7 +224,7 @@ class Script(scripts.Script):
                 p.seed = -1
                 processing.fix_seed(p)
             initial_output_dir = output_dir
-            output_dir = os.path.join(output_dir, str(p.seed))
+            
             base_output_dir = output_dir
 
             while True:
@@ -302,6 +307,7 @@ class Script(scripts.Script):
                             history.append(proc.images[0])
 
                         proc.seed = initial_seed
+                        p.seed = initial_seed
                         p.denoising_strength = current_denoising
                         all_images += history
                     else:
@@ -368,22 +374,32 @@ class Script(scripts.Script):
                                 img.save(os.path.join(save_dir, filename))
                         
                         # 실제 저장 하는 부분
-                        if is_traversing:
-                            # output_dir = os.path.join(output_dir, str(round(p.denoising_strength, 2)))
+                        if is_each_dir:
+                            output_dir = os.path.join(output_dir, str(p.seed))
+                        else:
                             base, extension = os.path.splitext(base_name)
-                            base_name = base + "-" + str(round(p.denoising_strength, 2)) + extension
+                            base_name = base + "-" + str(p.seed) + extension
+
+                        if is_traversing:
+                            if is_each_dir:
+                                output_dir = os.path.join(output_dir, str(round(p.denoising_strength, 2)))
+                            else:
+                                base, extension = os.path.splitext(base_name)
+                                base_name = base + "-" + str(round(p.denoising_strength, 2)) + extension
 
                         if is_rerun:
                             for output_index, o in enumerate(all_images):
-                                # temp = output_dir
-                                # output_dir = os.path.join(
-                                #     output_dir, "loop" + str(output_index)
-                                # )
+                                temp = output_dir
+                                save_filename = ''
+                                if is_each_dir:
+                                    output_dir = os.path.join(output_dir, "loop" + str(output_index))
+                                    save_filename = base_name
+                                else:
+                                    base, extension = os.path.splitext(base_name)
+                                    save_filename = base + "-loop" + str(output_index) + extension
                                 self.__create_folder(output_dir)
-                                # save_image(o, base_name, output_dir)
-                                base, extension = os.path.splitext(base_name)
-                                save_image(o, base + "-loop" + str(output_index) + extension, output_dir)
-                                # output_dir = temp
+                                save_image(o, save_filename, output_dir)
+                                output_dir = temp
                         else:
                             self.__create_folder(output_dir)
                             save_image(output, base_name, output_dir)
