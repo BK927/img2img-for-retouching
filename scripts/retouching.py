@@ -123,6 +123,15 @@ class Script(scripts.Script):
                 elem_id=self.elem_id("denoising_strength_change_factor"),
             )
 
+            loop_skip = gr.Slider(
+                minimum=0,
+                maximum=31,
+                step=1,
+                label="loop skip",
+                value=0,
+                elem_id=self.elem_id("loop_skip"),
+            )
+
         is_rerun.change(
             fn=lambda x: gr_show(x),
             inputs=[is_rerun],
@@ -149,6 +158,7 @@ class Script(scripts.Script):
             is_rerun,
             loops,
             denoising_strength_change_factor,
+            loop_skip,
             traversing_start,
             traversing_end,
             traversing_step,
@@ -175,6 +185,7 @@ class Script(scripts.Script):
         is_rerun,
         loops,
         denoising_strength_change_factor,
+        loop_skip,
         traversing_start,
         traversing_end,
         traversing_step,
@@ -387,6 +398,8 @@ class Script(scripts.Script):
 
                         if is_rerun:
                             for output_index, o in enumerate(all_images):
+                                if output_index < loop_skip:
+                                    continue
                                 temp = output_dir
                                 save_filename = ''
                                 if is_each_dir:
