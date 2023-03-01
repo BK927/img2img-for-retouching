@@ -391,10 +391,10 @@ class Script(scripts.Script):
 
                         if is_traversing:
                             if is_each_dir:
-                                output_dir = os.path.join(output_dir, str(round(p.denoising_strength, 2)))
+                                output_dir = os.path.join(output_dir, "{:.2f}".format(p.denoising_strength))
                             else:
                                 base, extension = os.path.splitext(base_name)
-                                base_name = base + "-" + str(round(p.denoising_strength, 2)) + extension
+                                base_name = base + "-" + "{:.2f}".format(p.denoising_strength) + extension
 
                         if is_rerun:
                             for output_index, o in enumerate(all_images):
